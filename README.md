@@ -4,7 +4,7 @@ Read articles one paragraph at a time with focused, distraction-free reading.
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj">
-    <img src="public/128.png" alt="Parsely" width="128" height="128">
+    <img src="public/icon/128.png" alt="Parsely" width="128" height="128">
   </a>
 </p>
 
@@ -17,11 +17,7 @@ Read articles one paragraph at a time with focused, distraction-free reading.
 ## Demo
 
 <p align="center">
-  <a href="https://vimeo.com/1149588347">
-    <img src="https://vumbnail.com/1149588347.jpg" alt="Parsely Demo" width="600">
-  </a>
-  <br>
-  <em>Click to watch the demo video</em>
+  <img src="public/parsely-demo.gif" alt="Parsely Demo" width="600">
 </p>
 
 ## Features

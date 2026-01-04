@@ -1,0 +1,8 @@
+node_modules/
+.output/
+.wxt/
+dist/
+landing/dist/
+coverage/
+*.min.js
+*.min.css

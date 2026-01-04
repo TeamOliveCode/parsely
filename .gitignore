@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Build output
+.output/
+output/
+ini/
+dist/
+
+# bmad
+_bmad-output/
+_bmad/
+
+# WXT
+.wxt/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+
+# LLM
+.claude
+.docs

@@ -1,0 +1,46 @@
+{
+  "name": "parsely",
+  "description": "Read articles one paragraph at a time with focused, distraction-free reading.",
+  "license": "MIT",
+  "version": "0.1.2",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build:landing": "vite build --config landing/vite.config.js",
+    "preview:landing": "vite preview --config landing/vite.config.js",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/jsdom": "^27.0.0",
+    "@types/mozilla-readability": "^0.2.1",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "happy-dom": "^20.0.11",
+    "jsdom": "^27.4.0",
+    "prettier": "^3.7.4",
+    "terser": "^5.37.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.51.0",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.16",
+    "wxt": "^0.20.6"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0"
+  }
+}

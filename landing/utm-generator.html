@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parsely UTM Link Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .subtitle {
+      color: #888;
+      margin-bottom: 32px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    label span.required {
+      color: #00ff9f;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #00ff9f;
+    }
+    input::placeholder {
+      color: #555;
+    }
+    .preset-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .preset-btn {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(0, 255, 159, 0.15);
+      border-color: rgba(0, 255, 159, 0.3);
+      color: #00ff9f;
+    }
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 32px 0;
+    }
+    .output-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .output-label {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .output-url {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+      color: #00ff9f;
+      margin-bottom: 16px;
+      min-height: 60px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      flex: 1;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #00ff9f;
+      color: #000;
+    }
+    .btn-primary:hover {
+      background: #00cc7f;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1a1a1a;
+      color: #00ff9f;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .history-section {
+      margin-top: 40px;
+    }
+    .history-title {
+      font-size: 1rem;
+      color: #888;
+      margin-bottom: 16px;
+    }
+    .history-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .history-item-url {
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.8rem;
+      color: #888;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .history-item-source {
+      background: rgba(0, 255, 159, 0.15);
+      color: #00ff9f;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .history-item-copy {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .history-item-copy:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>UTM Link Generator</h1>
+    <p class="subtitle">Parsely 마케팅 링크 생성기</p>
+
+    <div class="form-group">
+      <label>Base URL <span class="required">*</span></label>
+      <input type="url" id="baseUrl" value="https://parsely.obasic.com" placeholder="https://parsely.obasic.com">
+    </div>
+
+    <div class="form-group">
+      <label>utm_source <span class="required">*</span> (트래픽 출처)</label>
+      <input type="text" id="utmSource" placeholder="reddit, twitter, hackernews...">
+      <div class="preset-group">
+        <button class="preset-btn" data-field="utmSource" data-value="reddit">Reddit</button>
+        <button class="preset-btn" data-field="utmSource" data-value="twitter">Twitter</button>
+        <button class="preset-btn" data-field="utmSource" data-value="hackernews">Hacker News</button>
+        <button class="preset-btn" data-field="utmSource" data-value="producthunt">Product Hunt</button>
+        <button class="preset-btn" data-field="utmSource" data-value="linkedin">LinkedIn</button>
+        <button class="preset-btn" data-field="utmSource" data-value="facebook">Facebook</button>
+        <button class="preset-btn" data-field="utmSource" data-value="newsletter">Newsletter</button>
+        <button class="preset-btn" data-field="utmSource" data-value="blog">Blog</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>utm_medium (매체 유형)</label>
+      <input type="text" id="utmMedium" placeholder="social, email, paid, referral...">
+      <div class="preset-group">
+        <button class="preset-btn" data-field="utmMedium" data-value="social">Social</button>
+        <button class="preset-btn" data-field="utmMedium" data-value="email">Email</button>
+        <button class="preset-btn" data-field="utmMedium" data-value="paid">Paid</button>
+        <button class="preset-btn" data-field="utmMedium" data-value="referral">Referral</button>
+        <button class="preset-btn" data-field="utmMedium" data-value="organic">Organic</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>utm_campaign (캠페인 이름)</label>
+      <input type="text" id="utmCampaign" placeholder="launch, summer_2025, feature_update...">
+      <div class="preset-group">
+        <button class="preset-btn" data-field="utmCampaign" data-value="launch">Launch</button>
+        <button class="preset-btn" data-field="utmCampaign" data-value="awareness">Awareness</button>
+        <button class="preset-btn" data-field="utmCampaign" data-value="retargeting">Retargeting</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>utm_content (콘텐츠/서브채널 구분 - 선택)</label>
+      <input type="text" id="utmContent" placeholder="r_productivity, r_adhd, twitter_thread...">
+      <div class="preset-group" id="contentPresets">
+        <button class="preset-btn" data-field="utmContent" data-value="r_productivity">r/productivity</button>
+        <button class="preset-btn" data-field="utmContent" data-value="r_chrome_extensions">r/chrome_extensions</button>
+        <button class="preset-btn" data-field="utmContent" data-value="r_adhd">r/ADHD</button>
+        <button class="preset-btn" data-field="utmContent" data-value="r_getdisciplined">r/getdisciplined</button>
+        <button class="preset-btn" data-field="utmContent" data-value="r_selfimprovement">r/selfimprovement</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="output-section">
+      <div class="output-label">Generated URL</div>
+      <div class="output-url" id="outputUrl">URL을 생성하려면 utm_source를 입력하세요</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="copyBtn">Copy URL</button>
+        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+      </div>
+    </div>
+
+    <div class="history-section" id="historySection" style="display: none;">
+      <div class="history-title">Recently Generated</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">URL copied!</div>
+
+  <script>
+    const fields = ['baseUrl', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent'];
+    const outputUrl = document.getElementById('outputUrl');
+    const toast = document.getElementById('toast');
+    const historySection = document.getElementById('historySection');
+    const historyList = document.getElementById('historyList');
+
+    let history = JSON.parse(localStorage.getItem('utm_history') || '[]');
+    renderHistory();
+
+    function generateUrl() {
+      const base = document.getElementById('baseUrl').value.trim();
+      const source = document.getElementById('utmSource').value.trim();
+      const medium = document.getElementById('utmMedium').value.trim();
+      const campaign = document.getElementById('utmCampaign').value.trim();
+      const content = document.getElementById('utmContent').value.trim();
+
+      if (!base || !source) {
+        outputUrl.textContent = 'URL을 생성하려면 Base URL과 utm_source를 입력하세요';
+        outputUrl.style.color = '#888';
+        return '';
+      }
+
+      const params = new URLSearchParams();
+      if (source) params.set('utm_source', source);
+      if (medium) params.set('utm_medium', medium);
+      if (campaign) params.set('utm_campaign', campaign);
+      if (content) params.set('utm_content', content);
+
+      const url = `${base}?${params.toString()}`;
+      outputUrl.textContent = url;
+      outputUrl.style.color = '#00ff9f';
+      return url;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    function addToHistory(url, source) {
+      const existing = history.findIndex(h => h.url === url);
+      if (existing > -1) history.splice(existing, 1);
+
+      history.unshift({ url, source, timestamp: Date.now() });
+      history = history.slice(0, 10);
+      localStorage.setItem('utm_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      if (history.length === 0) {
+        historySection.style.display = 'none';
+        return;
+      }
+      historySection.style.display = 'block';
+      historyList.innerHTML = history.map((item, idx) => `
+        <div class="history-item">
+          <span class="history-item-source">${item.source}</span>
+          <span class="history-item-url">${item.url}</span>
+          <button class="history-item-copy" data-idx="${idx}">Copy</button>
+        </div>
+      `).join('');
+    }
+
+    // Event listeners
+    fields.forEach(field => {
+      document.getElementById(field).addEventListener('input', generateUrl);
+    });
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const field = btn.dataset.field;
+        const value = btn.dataset.value;
+        document.getElementById(field).value = value;
+        generateUrl();
+      });
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const url = generateUrl();
+      if (url) {
+        navigator.clipboard.writeText(url);
+        const source = document.getElementById('utmSource').value.trim();
+        addToHistory(url, source);
+        showToast('URL copied!');
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('baseUrl').value = 'https://parsely.obasic.com';
+      document.getElementById('utmSource').value = '';
+      document.getElementById('utmMedium').value = '';
+      document.getElementById('utmCampaign').value = '';
+      document.getElementById('utmContent').value = '';
+      generateUrl();
+    });
+
+    historyList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('history-item-copy')) {
+        const idx = parseInt(e.target.dataset.idx);
+        navigator.clipboard.writeText(history[idx].url);
+        showToast('URL copied!');
+      }
+    });
+
+    // Initial generate
+    generateUrl();
+  </script>
+</body>
+</html>

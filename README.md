@@ -14,6 +14,16 @@ Read articles one paragraph at a time with focused, distraction-free reading.
   </a>
 </p>
 
+## Demo
+
+<p align="center">
+  <a href="https://vimeo.com/1149588347">
+    <img src="https://vumbnail.com/1149588347.jpg" alt="Parsely Demo" width="600">
+  </a>
+  <br>
+  <em>Click to watch the demo video</em>
+</p>
+
 ## Features
 
 - **Paragraph-by-paragraph reading** - Focus on one paragraph at a time

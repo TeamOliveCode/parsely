@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why I Built Parsely - A Story About Losing the Ability to Read</title>
+    <meta
+      name="description"
+      content="I'm 35 years old, and I couldn't finish reading articles anymore. So I built Parsely - a browser extension that shows one paragraph at a time."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Why I Built Parsely - I'm 35 and couldn't finish reading articles anymore" />
+    <meta
+      property="og:description"
+      content="I'm 35 years old, and I couldn't finish reading articles anymore. So I built Parsely."
+    />
+    <meta property="og:image" content="./128.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Why I Built Parsely" />
+    <meta name="twitter:description" content="I'm 35 and couldn't finish reading articles anymore, so I built this." />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./16.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Analytics -->
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="61a84f92-685b-41fd-85ba-063bb7bdd424"
+    ></script>
+
+    <style>
+      /* Story page specific styles */
+      .story-header {
+        padding: 2rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 3rem;
+      }
+
+      .story-header .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .story-header .logo-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .story-header .logo-link img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .story-header .logo-link span {
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .story-header .back-link {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .story-header .back-link:hover {
+        color: #00ff9f;
+      }
+
+      .story-container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 2rem 6rem;
+      }
+
+      .story-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .story-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .story-content {
+        font-family: 'Merriweather', Georgia, serif;
+        font-size: 1.125rem;
+        line-height: 1.9;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .story-content p {
+        margin-bottom: 1.75rem;
+      }
+
+      .story-content h2 {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
+
+      .story-content strong {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .story-content em {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .story-content blockquote {
+        border-left: 3px solid #00ff9f;
+        padding-left: 1.5rem;
+        margin: 2rem 0;
+        font-style: italic;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .story-content ul {
+        margin: 1.5rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .story-content li {
+        margin-bottom: 0.75rem;
+      }
+
+      .story-highlight {
+        background: linear-gradient(135deg, rgba(0, 255, 159, 0.15) 0%, rgba(0, 212, 255, 0.15) 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2.5rem 0;
+        border: 1px solid rgba(0, 255, 159, 0.2);
+      }
+
+      .story-highlight p {
+        margin-bottom: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        color: #fff;
+      }
+
+      .story-divider {
+        text-align: center;
+        margin: 3rem 0;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 1.5rem;
+        letter-spacing: 0.5rem;
+      }
+
+      .story-cta {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 3rem;
+        text-align: center;
+        margin-top: 4rem;
+      }
+
+      .story-cta h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .story-cta p {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 2rem;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .story-cta .cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #00ff9f 0%, #00d4ff 100%);
+        color: #000;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 1.1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .story-cta .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(0, 255, 159, 0.3);
+      }
+
+      .story-cta .cta-button svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .story-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .story-links a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .story-links a:hover {
+        color: #00ff9f;
+      }
+
+      .story-footer {
+        text-align: center;
+        padding: 3rem 0;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 4rem;
+      }
+
+      @media (max-width: 768px) {
+        .story-title {
+          font-size: 1.75rem;
+        }
+
+        .story-container {
+          padding: 0 1.25rem 4rem;
+        }
+
+        .story-content {
+          font-size: 1rem;
+        }
+
+        .story-cta {
+          padding: 2rem 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="story-header">
+      <div class="container">
+        <a href="./" class="logo-link">
+          <img src="./32.png" alt="Parsely" />
+          <span>Parsely</span>
+        </a>
+        <a href="./" class="back-link">← Back to home</a>
+      </div>
+    </header>
+
+    <!-- Story Content -->
+    <article class="story-container">
+      <h1 class="story-title">I'm 35 years old, and I couldn't finish reading articles anymore. So I built this.</h1>
+
+      <div class="story-meta">
+        <span>January 2025</span>
+        <span>•</span>
+        <span>8 min read</span>
+      </div>
+
+      <div class="story-content">
+        <p>I need to confess something embarrassing. I can't finish reading articles anymore.</p>
+
+        <p>I don't mean I choose not to. I mean I physically cannot. My brain won't let me.</p>
+
+        <p>It wasn't always like this. In my twenties, I was the guy who read everything. Long investigative pieces, academic papers, entire book chapters in one sitting. Reading was my identity. I was proud of it.</p>
+
+        <p>Then somewhere around 32 or 33, something broke.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>The moment I knew I had a problem</h2>
+
+        <p>I remember the exact moment I realized how bad it had gotten.</p>
+
+        <p>I was at a dinner party at Christmas. Someone brought up an article about AI that had been making the rounds – you know the type, one of those big think pieces everyone was talking about. The whole table had opinions. They quoted specific paragraphs. They debated the author's conclusions.</p>
+
+        <p>I had opened that same article three separate times that week. I never made it past the third paragraph.</p>
+
+        <p>I just nodded along, pretending I'd read it, feeling like a fraud. On the drive home, I sat in my car in the garage for ten minutes, staring at the steering wheel, wondering what was wrong with me.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>The shame spiral</h2>
+
+        <p>It got worse. I started avoiding articles entirely because opening them meant facing another failure.</p>
+
+        <p>My "Read Later" list became a graveyard – 2,000+ articles I'd never touch. Every time I saw that number, I felt a little more pathetic.</p>
+
+        <p>My wife would send me articles with "you'll love this!" and I'd respond with a thumbs up emoji, never actually reading them. Weeks later she'd ask what I thought, and I'd have to admit I never got to it. The disappointment in her eyes. That quiet "oh." It killed me every time.</p>
+
+        <p>My colleagues would reference blog posts in meetings and I'd nod knowingly, having only read the headline. Sometimes I'd get called on to give an opinion, and I'd have to bullshit my way through, praying no one would ask follow-up questions.</p>
+
+        <p>I started wondering if this was just aging. Maybe this is what happens in your mid-30s. Maybe I'd peaked intellectually and this was the long, slow decline. I genuinely believed that for a while.</p>
+
+        <p>It's a dark place, thinking you're getting dumber and there's nothing you can do about it.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>The worst part</h2>
+
+        <p>Here's what made me feel truly broken. I could scroll social media for hours with zero effort. Twitter threads, Reddit comments, YouTube shorts, TikTok – all completely effortless. My brain devoured that garbage happily.</p>
+
+        <p>But ask me to read something that actually mattered? Something that might make me smarter, more informed, a better person? Impossible.</p>
+
+        <p>I felt like a lab rat, programmed to seek the easiest dopamine hit. Like I'd lost control of my own mind. Like the version of me who used to read Cosmos by Carl Sagan for fun was dead, replaced by this hollow, distracted shell.</p>
+
+        <p>Some nights I'd lie awake wondering. '<em>Is this who I am now? Forever?</em>'</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>Rock bottom</h2>
+
+        <p>One night – 2am, couldn't sleep, lying in bed doom-scrolling (the irony wasn't lost on me) – I came across an article about attention and the modern web. Ironically, I couldn't finish it either. But I read enough, luckily.</p>
+
+        <p>The article argued that our brains aren't broken. The web is.</p>
+
+        <p>Modern articles are designed by teams of people whose job is to maximize "engagement metrics." Scroll depth. Time on page. Ad impressions. Click-through rates. Everything around the content – sidebars, related articles, social buttons, newsletter popups, comment sections, auto-playing videos – is optimized to pull our attention away from what we came to read.</p>
+
+        <p>The content itself is often padded with filler to hit word count targets. Paragraphs are written to be skimmed, not absorbed. Headlines are designed to be shared, not understood.</p>
+
+        <div class="story-highlight">
+          <p>We're not failing to read. We're fighting an environment that's engineered to prevent deep reading.</p>
+        </div>
+
+        <p>That reframe hit me hard. What if I wasn't broken? What if I'd just been blaming myself for losing a fight that was rigged from the start?</p>
+
+        <p>That night, still unable to sleep, I opened my laptop and started coding.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>What I built</h2>
+
+        <p>Parsely is stupidly simple. When you click the extension icon (or press Ctrl+Shift+R), the entire webpage fades away. It blurs and darkens into the background. In the center of your screen appears a single, beautifully formatted paragraph.</p>
+
+        <p>Just that paragraph. Nothing else.</p>
+
+        <p>You read it. You press the arrow key or spacebar. The next paragraph slides in. The previous one fades but stays visible above, grayed out, so you don't lose context. Below, you can see a hint of what's coming next.</p>
+
+        <p>It's like reading a book, but on the web. One thought at a time.</p>
+
+        <p>No sidebars. No popups. No "you might also like." No comment section pulling your eyes down. No scroll bar taunting you with how much is left. Just you and one paragraph, in a clean, quiet space.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>Does it actually work?</h2>
+
+        <p>I was skeptical it would make any difference. I'd tried so many things. But the first time I used it, I read an entire 4,000-word essay about urban planning. The whole thing. Without stopping. Without checking my phone. Without that familiar urge to escape.</p>
+
+        <p>When I finished, I just sat there for a moment. I felt... proud? It sounds pathetic, but finishing an article had become so rare that it felt like an accomplishment.</p>
+
+        <p>I've been using Parsely daily for months now. Last week I read a 6,000-word piece about AI energy policy – dense, technical, important. I not only finished it, I took notes. I remembered it well enough to discuss it intelligently the next day. I felt like my old self again.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>The unexpected part</h2>
+
+        <p>Here's what I didn't anticipate. It changed more than just my reading.</p>
+
+        <p>My wife sent me an article last month. I actually read it. The whole thing. That night, we talked about it over dinner for an hour. She looked at me differently – like she was seeing the person she married again. That meant more to me than I can express.</p>
+
+        <p>At work, I'm contributing to discussions again. Not bullshitting, actually contributing. Referencing things I've read, understood, and thought about. The impostor syndrome is fading.</p>
+
+        <p>I'm reading books again. Actual books. My attention span is slowly healing, paragraph by paragraph.</p>
+
+        <p>I don't think I was broken. I think I was a normal human being, fighting an unfair fight against a system designed to fragment my attention. And I think a lot of people are in the same boat, quietly blaming themselves, just like I was.</p>
+
+        <div class="story-divider">• • •</div>
+
+        <h2>Why I'm sharing this</h2>
+
+        <p>I debated whether to post this. It's embarrassing to admit how much I was struggling with something that sounds so simple. "Just read the article, dude."</p>
+
+        <p>But I keep meeting people who describe the exact same thing. The shame. The avoidance. The feeling that something is wrong with them. And I wonder how many people are suffering in silence, never realizing that the problem might not be them at all.</p>
+
+        <p>So here it is. A tool born from my own frustration, my own shame, my own 2am desperation. Maybe it'll help someone else too.</p>
+
+        <p>If any of this resonates, give Parsely a try. And if you have ideas for making it better, I'd genuinely love to hear them. I'm building this for people like me, which means I'm building it for people like you.</p>
+
+        <p><em>Thanks for reading this far.</em></p>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="story-cta">
+        <h3>Ready to finish reading again?</h3>
+        <p>Install Parsely and try it on your next article. It's free, forever.</p>
+        <a
+          href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj?utm_source=story&utm_medium=web&utm_campaign=hackernews"
+          class="cta-button"
+          data-umami-event="install-click"
+          data-umami-event-location="story"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+          <span>Install for Chrome – Free</span>
+        </a>
+        <div class="story-links">
+          <a href="https://github.com/TeamOliveCode/parsely">GitHub (MIT)</a>
+          <a href="./">Learn more</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Footer -->
+    <footer class="story-footer">
+      <div class="container">
+        <p>© 2025 Parsely. Built with frustration, shipped with hope.</p>
+      </div>
+    </footer>
+  </body>
+</html>

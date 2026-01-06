@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
         input: {
           main: resolve(__dirname, 'index.html'),
           'utm-generator': resolve(__dirname, 'utm-generator.html'),
+          'story': resolve(__dirname, 'story.html'),
         },
       },
     },

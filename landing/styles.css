@@ -203,11 +203,22 @@ kbd {
   color: var(--color-text-muted);
 }
 
+.hero-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.hero-links-divider {
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+}
+
 .github-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 16px;
   padding: 10px 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--color-border);
@@ -229,6 +240,19 @@ kbd {
   width: 18px;
   height: 18px;
   fill: currentColor;
+}
+
+.story-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.story-link:hover {
+  color: var(--color-accent);
 }
 
 /* ========================================

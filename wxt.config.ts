@@ -16,6 +16,16 @@ export default defineConfig({
         },
         description: 'Run Parsely'
       }
-    }
+    },
+    browser_specific_settings: {
+      gecko: {
+        id: 'parsely@olivecode.dev',
+        strict_min_version: '128.0',
+        // @ts-expect-error: New Firefox requirement not yet in WXT types
+        data_collection_permissions: {
+          required: ['none'],
+        },
+      },
+    },
   },
 });

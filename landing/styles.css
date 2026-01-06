@@ -1325,6 +1325,48 @@ kbd {
 }
 
 /* ========================================
+   Stay Updated Section
+   ======================================== */
+.stay-updated {
+  padding: 100px 24px;
+  background: var(--color-bg-secondary);
+  text-align: center;
+  position: relative;
+}
+
+.stay-updated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.stay-updated h2 {
+  margin-bottom: 16px;
+}
+
+.stay-updated .section-subtitle {
+  margin-top: 0;
+  margin-bottom: 40px;
+}
+
+.tally-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.tally-wrapper iframe {
+  border-radius: var(--radius-md);
+}
+
+/* ========================================
    Final CTA Section
    ======================================== */
 .final-cta {

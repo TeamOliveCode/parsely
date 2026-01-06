@@ -6,6 +6,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: resolve(__dirname),
+    publicDir: resolve(__dirname, 'public'),
     define: {
       '__UMAMI_WEBSITE_ID__': JSON.stringify(env.VITE_LANDING_UMAMI_WEBSITE_ID || ''),
     },

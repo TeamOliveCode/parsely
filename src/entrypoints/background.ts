@@ -30,11 +30,18 @@ export default defineBackground(() => {
   // Handle messages from content scripts
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === 'OPEN_SHORTCUTS_PAGE') {
-      browser.tabs.create({ url: 'chrome://extensions/shortcuts' });
+      // Firefox uses about:addons (can't open directly), Chrome/Edge use chrome://extensions/shortcuts
+      const isFirefox = navigator.userAgent.includes('Firefox');
+      const url = isFirefox
+        ? 'https://support.mozilla.org/en-US/kb/manage-extension-shortcuts-firefox'
+        : 'chrome://extensions/shortcuts';
+      browser.tabs.create({ url });
     }
   });
 
-  browser.action.onClicked.addListener(async (tab) => {
+  // Use browserAction for MV2 (Firefox), action for MV3 (Chrome)
+  const actionApi = browser.action || browser.browserAction;
+  actionApi.onClicked.addListener(async (tab) => {
     if (!tab.id || !tab.url) return;
 
     // Skip restricted pages where content scripts can't run

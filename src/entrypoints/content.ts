@@ -217,6 +217,15 @@ export default defineContentScript({
             reader.setShowSubscriptionPrompt(shouldShowPrompt);
             await ProgressStorage.incrementUseCount();
 
+            // Show onboarding for first-time users
+            const shouldShowOnboarding = await ProgressStorage.shouldShowOnboarding();
+            if (shouldShowOnboarding) {
+              reader.onOnboardingComplete(async () => {
+                await ProgressStorage.setOnboardingCompleted();
+              });
+              reader.showOnboarding();
+            }
+
             // Link state to UI and Storage
             unsubscribe = state.subscribe(async (index, text, remaining, isCompleted) => {
               if (isCompleted) {

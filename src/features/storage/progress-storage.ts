@@ -4,6 +4,7 @@ import type {
   HighlightNote,
   UserPreferences,
   SubscriptionStatus,
+  OnboardingStatus,
 } from '../../types';
 
 export class ProgressStorage {
@@ -13,6 +14,7 @@ export class ProgressStorage {
   private static readonly BOOKMARKS_KEY = 'reader_bookmarks';
   private static readonly PREFS_KEY = 'reader_preferences';
   private static readonly SUBSCRIPTION_KEY = 'reader_subscription';
+  private static readonly ONBOARDING_KEY = 'reader_onboarding';
 
   public static async saveProgress(url: string, index: number): Promise<void> {
     const key = this.getKey(url);
@@ -213,5 +215,26 @@ export class ProgressStorage {
     }
 
     return true;
+  }
+
+  // Onboarding functions
+  public static async getOnboardingStatus(): Promise<OnboardingStatus> {
+    const result = await browser.storage.local.get(this.ONBOARDING_KEY);
+    return (
+      (result[this.ONBOARDING_KEY] as OnboardingStatus) || { hasSeenOnboarding: false }
+    );
+  }
+
+  public static async setOnboardingCompleted(): Promise<void> {
+    const status: OnboardingStatus = {
+      hasSeenOnboarding: true,
+      completedAt: Date.now(),
+    };
+    await browser.storage.local.set({ [this.ONBOARDING_KEY]: status });
+  }
+
+  public static async shouldShowOnboarding(): Promise<boolean> {
+    const status = await this.getOnboardingStatus();
+    return !status.hasSeenOnboarding;
   }
 }

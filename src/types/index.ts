@@ -48,6 +48,12 @@ export interface SubscriptionStatus {
   dismissedAt?: number;
 }
 
+// Onboarding status
+export interface OnboardingStatus {
+  hasSeenOnboarding: boolean;
+  completedAt?: number;
+}
+
 // State change listener type
 export type StateChangeListener = (
   index: number,

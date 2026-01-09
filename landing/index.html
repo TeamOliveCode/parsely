@@ -67,18 +67,81 @@
         <p class="subtitle">
           Focused, distraction-free reading.<br />Finally finish the articles you've been saving.
         </p>
-        <a
-          href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
-          class="cta-button"
-          data-umami-event="install-click"
-          data-umami-event-location="hero"
-        >
-          <svg class="chrome-icon" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
-          <span>Install for Chrome</span>
-        </a>
+        <div class="cta-buttons" id="hero-cta">
+          <!-- Primary button - shown based on detected browser -->
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="hero"
+            data-browser="chrome"
+          >
+            <img src="./public/chrome.png" alt="Chrome" class="browser-icon" />
+            <span>Install for Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="hero"
+            data-browser="edge"
+            hidden
+          >
+            <img src="./public/edge.png" alt="Edge" class="browser-icon" />
+            <span>Install for Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="hero"
+            data-browser="firefox"
+            hidden
+          >
+            <img src="./public/firefox.png" alt="Firefox" class="browser-icon" />
+            <span>Install for Firefox</span>
+          </a>
+          <!-- Other browsers toggle -->
+          <button class="cta-button cta-button-secondary other-browsers-btn" data-target="hero-cta">
+            <span>Other browsers</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+        <!-- Expanded browser options -->
+        <div class="browser-options" id="hero-cta-options" hidden>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="hero-expanded"
+            data-browser="chrome"
+          >
+            <img src="./public/chrome.png" alt="Chrome" />
+            <span>Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="hero-expanded"
+            data-browser="edge"
+          >
+            <img src="./public/edge.png" alt="Edge" />
+            <span>Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="hero-expanded"
+            data-browser="firefox"
+          >
+            <img src="./public/firefox.png" alt="Firefox" />
+            <span>Firefox</span>
+          </a>
+        </div>
         <p class="cta-note">Free forever. No account required.</p>
         <div class="hero-links">
           <a
@@ -249,42 +312,21 @@
       </div>
     </section>
 
-    <!-- The Problem Explained -->
-    <section class="problem-deep">
+    <!-- Demo Video Section -->
+    <section class="demo-video">
       <div class="container">
-        <div class="problem-content">
-          <h2>The internet broke how we read</h2>
-          <p class="problem-lead">
-            Articles are designed for scrolling, not reading. Your brain sees a wall of text and
-            gives up before you even start.
-          </p>
-          <div class="problem-stats">
-            <div class="stat-card">
-              <span class="stat-number">70%</span>
-              <span class="stat-label">of saved articles are never opened again</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">8 sec</span>
-              <span class="stat-label">average attention span (down from 12 in 2000)</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-number">26%</span>
-              <span class="stat-label">of readers make it past the first paragraph</span>
-            </div>
-          </div>
+        <h2>See it in action</h2>
+        <p class="section-subtitle">15 seconds to understand. A lifetime of focused reading.</p>
+        <div class="video-wrapper">
+          <iframe
+            src="https://player.vimeo.com/video/1149588347?h=1f658a997c"
+            title="Parsely Demo"
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+            allowfullscreen
+          >
+          </iframe>
         </div>
-      </div>
-    </section>
-
-    <!-- Solution Introduction -->
-    <section class="solution-intro">
-      <div class="container">
-        <div class="solution-badge">The Parsely Approach</div>
-        <h2>What if reading felt<br /><span class="gradient-text">effortless again?</span></h2>
-        <p class="solution-lead">
-          Parsely transforms any article into focused, paragraph-by-paragraph reading. One thought
-          at a time. No distractions. Just comprehension.
-        </p>
       </div>
     </section>
 
@@ -343,60 +385,7 @@
       </div>
     </section>
 
-    <!-- Demo Video Section -->
-    <section class="demo-video">
-      <div class="container">
-        <h2>See it in action</h2>
-        <p class="section-subtitle">30 seconds to understand. A lifetime of focused reading.</p>
-        <div class="video-wrapper">
-          <iframe
-            src="https://player.vimeo.com/video/1149588347?h=1f658a997c"
-            title="Parsely Demo"
-            frameborder="0"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-            allowfullscreen
-          >
-          </iframe>
-        </div>
-      </div>
-    </section>
-
-    <!-- How It Works - Simplified -->
-    <section class="how-it-works">
-      <div class="container">
-        <h2>Three steps to focused reading</h2>
-        <div class="steps">
-          <div class="step">
-            <div class="step-number">1</div>
-            <h3>Click the icon</h3>
-            <p>
-              On any article, click Parsely icon. Or select text and right-click "Read with
-              Parsely".
-            </p>
-          </div>
-          <div class="step-connector"></div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <h3>Read with focus</h3>
-            <p>
-              Navigate with <kbd>→</kbd> <kbd>←</kbd> keys, click, or scroll. Add memos and
-              bookmarks.
-            </p>
-          </div>
-          <div class="step-connector"></div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <h3>Actually finish</h3>
-            <p>
-              Progress saves automatically. Return anytime - you'll start exactly where you left
-              off.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features - Deeper Dive -->
+    <!-- Features -->
     <section class="features">
       <div class="container">
         <h2>Built for deep readers</h2>
@@ -430,53 +419,6 @@
           <div class="feature-card">
             <div class="feature-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <h3>Time Estimation</h3>
-            <p>Know exactly how long before you commit. "5 min read" that's actually 5 minutes.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </div>
-            <h3>Intuitive Navigation</h3>
-            <p>
-              Arrow keys, click, scroll, or swipe. Navigate your way - keyboard, mouse, or trackpad.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
-            <h3>Source Highlighting</h3>
-            <p>
-              See exactly where you are in the original article. The current paragraph lights up on
-              the page.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-            </div>
-            <h3>Read Any Selection</h3>
-            <p>
-              Select any text, right-click "Read with Parsely". Comments, sidebars, anything
-              readable.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -487,23 +429,6 @@
             <p>
               Add notes to paragraphs. Highlight text and annotate. Build your personal knowledge
               base.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
-            </div>
-            <h3>Multi-Paragraph View</h3>
-            <p>
-              Show 1, 3, or 5 paragraphs at once. Previous fades in, next waits. Context without
-              clutter.
             </p>
           </div>
           <div class="feature-card">
@@ -520,32 +445,6 @@
               5 reading fonts. 11 font sizes. 3 overlay modes. 3 spacing options. Make it perfect
               for you.
             </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Who It's For -->
-    <section class="audience">
-      <div class="container">
-        <h2>Built for people who</h2>
-        <div class="audience-grid">
-          <div class="audience-card">
-            <div class="audience-icon">📚</div>
-            <h3>Have 100+ unread articles</h3>
-            <p>
-              Pocket, Instapaper, bookmarks folder - wherever your "read later" graveyard lives.
-            </p>
-          </div>
-          <div class="audience-card">
-            <div class="audience-icon">🧠</div>
-            <h3>Want to actually retain what they read</h3>
-            <p>Not just skim. Understand. Remember. Apply.</p>
-          </div>
-          <div class="audience-card">
-            <div class="audience-icon">⏰</div>
-            <h3>Read in stolen moments</h3>
-            <p>5 minutes here, 10 minutes there. Progress should save, not reset.</p>
           </div>
         </div>
       </div>
@@ -585,30 +484,6 @@
                 <td class="check">✓</td>
               </tr>
               <tr>
-                <td>Source highlighting</td>
-                <td class="check">✓</td>
-                <td class="cross">✗</td>
-                <td class="cross">✗</td>
-              </tr>
-              <tr>
-                <td>Read selected text (context menu)</td>
-                <td class="check">✓</td>
-                <td class="cross">✗</td>
-                <td class="cross">✗</td>
-              </tr>
-              <tr>
-                <td>Memos & highlights</td>
-                <td class="check">✓</td>
-                <td class="check">✓</td>
-                <td class="cross">✗</td>
-              </tr>
-              <tr>
-                <td>Accurate time estimates</td>
-                <td class="check">✓</td>
-                <td class="partial">~</td>
-                <td class="cross">✗</td>
-              </tr>
-              <tr>
                 <td>No account required</td>
                 <td class="check">✓</td>
                 <td class="cross">✗</td>
@@ -633,18 +508,81 @@
         <p class="cta-lead">
           Install in 10 seconds. Read your first article in focus mode. Feel the difference.
         </p>
-        <a
-          href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
-          class="cta-button cta-large"
-          data-umami-event="install-click"
-          data-umami-event-location="footer"
-        >
-          <svg class="chrome-icon" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
-          <span>Install for Chrome - It's Free</span>
-        </a>
+        <div class="cta-buttons" id="footer-cta">
+          <!-- Primary button - shown based on detected browser -->
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button cta-large"
+            data-umami-event="install-click"
+            data-umami-event-location="footer"
+            data-browser="chrome"
+          >
+            <img src="./public/chrome.png" alt="Chrome" class="browser-icon" />
+            <span>Install for Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button cta-large"
+            data-umami-event="install-click"
+            data-umami-event-location="footer"
+            data-browser="edge"
+            hidden
+          >
+            <img src="./public/edge.png" alt="Edge" class="browser-icon" />
+            <span>Install for Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="cta-button cta-large"
+            data-umami-event="install-click"
+            data-umami-event-location="footer"
+            data-browser="firefox"
+            hidden
+          >
+            <img src="./public/firefox.png" alt="Firefox" class="browser-icon" />
+            <span>Install for Firefox</span>
+          </a>
+          <!-- Other browsers toggle -->
+          <button class="cta-button cta-large cta-button-secondary other-browsers-btn" data-target="footer-cta">
+            <span>Other browsers</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+        <!-- Expanded browser options -->
+        <div class="browser-options" id="footer-cta-options" hidden>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="footer-expanded"
+            data-browser="chrome"
+          >
+            <img src="./public/chrome.png" alt="Chrome" />
+            <span>Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="footer-expanded"
+            data-browser="edge"
+          >
+            <img src="./public/edge.png" alt="Edge" />
+            <span>Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="browser-option"
+            data-umami-event="install-click"
+            data-umami-event-location="footer-expanded"
+            data-browser="firefox"
+          >
+            <img src="./public/firefox.png" alt="Firefox" />
+            <span>Firefox</span>
+          </a>
+        </div>
         <div class="cta-benefits">
           <span>✓ No account needed</span>
           <span>✓ Free forever</span>
@@ -658,7 +596,7 @@
       <div class="container">
         <h2>Missing a feature you need?</h2>
         <p class="section-subtitle">
-          Safari, Firefox, LaTeX support, and more coming soon.<br />Leave your email and we'll notify you when it's ready.
+          Safari, LaTeX support, and more coming soon.<br />Leave your email and we'll notify you when it's ready.
         </p>
         <div class="tally-wrapper">
           <iframe
@@ -737,6 +675,51 @@
         var s = d.createElement('script');
         (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
       }
+
+      // Browser detection and CTA buttons
+      (function() {
+        // Detect browser
+        function detectBrowser() {
+          const ua = navigator.userAgent;
+          if (ua.includes('Edg/')) return 'edge';
+          if (ua.includes('Firefox/')) return 'firefox';
+          if (ua.includes('Chrome/')) return 'chrome';
+          return 'chrome'; // Default to Chrome
+        }
+
+        const currentBrowser = detectBrowser();
+
+        // Show the correct primary button based on detected browser
+        document.querySelectorAll('.cta-buttons').forEach(container => {
+          const buttons = container.querySelectorAll('a[data-browser]');
+          buttons.forEach(btn => {
+            if (btn.dataset.browser === currentBrowser) {
+              btn.removeAttribute('hidden');
+            } else {
+              btn.setAttribute('hidden', '');
+            }
+          });
+        });
+
+        // Toggle "Other browsers" options
+        document.querySelectorAll('.other-browsers-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const optionsEl = document.getElementById(targetId + '-options');
+            const isExpanded = !optionsEl.hidden;
+
+            optionsEl.hidden = isExpanded;
+            btn.classList.toggle('expanded', !isExpanded);
+
+            // Hide current browser in expanded options
+            if (!isExpanded) {
+              optionsEl.querySelectorAll('.browser-option').forEach(opt => {
+                opt.classList.toggle('current', opt.dataset.browser === currentBrowser);
+              });
+            }
+          });
+        });
+      })();
     </script>
   </body>
 </html>

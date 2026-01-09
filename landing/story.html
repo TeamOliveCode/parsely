@@ -258,6 +258,65 @@
         margin-top: 4rem;
       }
 
+      /* Browser-specific CTA styles */
+      .story-cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .story-cta-buttons .cta-button[hidden] {
+        display: none !important;
+      }
+
+      .story-cta-buttons .browser-icon {
+        width: 22px;
+        height: 22px;
+      }
+
+      .browser-options-inline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .browser-options-inline .other-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+      }
+
+      .browser-option-small {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+      }
+
+      .browser-option-small:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(0, 255, 159, 0.3);
+        color: #fff;
+      }
+
+      .browser-option-small[hidden] {
+        display: none !important;
+      }
+
+      .browser-option-small img {
+        width: 18px;
+        height: 18px;
+      }
+
       @media (max-width: 768px) {
         .story-title {
           font-size: 1.75rem;
@@ -273,6 +332,15 @@
 
         .story-cta {
           padding: 2rem 1.5rem;
+        }
+
+        .browser-options-inline {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .browser-options-inline .other-label {
+          margin-bottom: 4px;
         }
       }
     </style>
@@ -425,18 +493,74 @@
       <div class="story-cta">
         <h3>Ready to finish reading again?</h3>
         <p>Install Parsely and try it on your next article. It's free, forever.</p>
-        <a
-          href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj?utm_source=story&utm_medium=web&utm_campaign=hackernews"
-          class="cta-button"
-          data-umami-event="install-click"
-          data-umami-event-location="story"
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
-          <span>Install for Chrome – Free</span>
-        </a>
+        <div class="story-cta-buttons" id="story-cta">
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="story"
+            data-browser="chrome"
+          >
+            <img src="./public/chrome.png" alt="Chrome" class="browser-icon" />
+            <span>Install for Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="story"
+            data-browser="edge"
+            hidden
+          >
+            <img src="./public/edge.png" alt="Edge" class="browser-icon" />
+            <span>Install for Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="cta-button"
+            data-umami-event="install-click"
+            data-umami-event-location="story"
+            data-browser="firefox"
+            hidden
+          >
+            <img src="./public/firefox.png" alt="Firefox" class="browser-icon" />
+            <span>Install for Firefox</span>
+          </a>
+        </div>
+        <div class="browser-options-inline" id="story-cta-options">
+          <span class="other-label">Also available for:</span>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option-small"
+            data-umami-event="install-click"
+            data-umami-event-location="story-other"
+            data-browser="chrome"
+            hidden
+          >
+            <img src="./public/chrome.png" alt="Chrome" />
+            <span>Chrome</span>
+          </a>
+          <a
+            href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj"
+            class="browser-option-small"
+            data-umami-event="install-click"
+            data-umami-event-location="story-other"
+            data-browser="edge"
+          >
+            <img src="./public/edge.png" alt="Edge" />
+            <span>Edge</span>
+          </a>
+          <a
+            href="https://addons.mozilla.org/firefox/addon/parsely/"
+            class="browser-option-small"
+            data-umami-event="install-click"
+            data-umami-event-location="story-other"
+            data-browser="firefox"
+          >
+            <img src="./public/firefox.png" alt="Firefox" />
+            <span>Firefox</span>
+          </a>
+        </div>
         <div class="story-links">
           <a href="https://github.com/TeamOliveCode/parsely">GitHub (MIT)</a>
           <a href="./">Learn more</a>
@@ -450,5 +574,44 @@
         <p>© 2025 Parsely. Built with frustration, shipped with hope.</p>
       </div>
     </footer>
+
+    <!-- Browser Detection Script -->
+    <script>
+      (function () {
+        function detectBrowser() {
+          const ua = navigator.userAgent;
+          if (ua.includes('Edg/')) return 'edge';
+          if (ua.includes('Firefox/')) return 'firefox';
+          if (ua.includes('Chrome/')) return 'chrome';
+          return 'chrome'; // Default to Chrome
+        }
+
+        const currentBrowser = detectBrowser();
+
+        // Show the appropriate primary CTA button
+        const ctaButtons = document.getElementById('story-cta');
+        if (ctaButtons) {
+          ctaButtons.querySelectorAll('a[data-browser]').forEach((btn) => {
+            if (btn.dataset.browser === currentBrowser) {
+              btn.removeAttribute('hidden');
+            } else {
+              btn.setAttribute('hidden', '');
+            }
+          });
+        }
+
+        // Show other browsers in the inline options (hide current browser)
+        const optionsInline = document.getElementById('story-cta-options');
+        if (optionsInline) {
+          optionsInline.querySelectorAll('a[data-browser]').forEach((opt) => {
+            if (opt.dataset.browser === currentBrowser) {
+              opt.setAttribute('hidden', '');
+            } else {
+              opt.removeAttribute('hidden');
+            }
+          });
+        }
+      })();
+    </script>
   </body>
 </html>

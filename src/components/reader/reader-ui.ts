@@ -13,6 +13,7 @@ import type {
   HighlightNote,
 } from '../../types';
 import type { ScrollController } from '../../core/navigation/scroll-controller';
+import { OnboardingGuide } from './onboarding-guide';
 
 export class ReaderUI {
   private container: HTMLElement;
@@ -33,6 +34,9 @@ export class ReaderUI {
   private allBookmarks: Bookmark[] = [];
   private allHighlightNotes: HighlightNote[] = [];
   private currentUrl: string = '';
+
+  private onboardingGuide: OnboardingGuide;
+  private onboardingCompleteCallback: (() => void) | null = null;
 
   private currentOpacityLevel: number = 1;
   private showSubscriptionPrompt: boolean = false;
@@ -88,6 +92,7 @@ export class ReaderUI {
     this.container.tabIndex = -1;
 
     this.shadowRoot = this.container.attachShadow({ mode: 'closed' });
+    this.onboardingGuide = new OnboardingGuide(this.shadowRoot);
     this.renderInitial();
     this.setupEvents();
   }
@@ -109,11 +114,13 @@ export class ReaderUI {
     this.setupTextSelection();
     this.setupToolbarButtons();
     this.setupSettingsPanel();
+    this.setupOnboarding();
   }
 
   private getStyles(): string {
     return `
       :host { display: block; }
+      ${this.onboardingGuide.getStyles()}
       #overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -271,6 +278,12 @@ export class ReaderUI {
       .settings-label {
         font-size: 0.7rem; color: rgba(255, 255, 255, 0.5); text-transform: uppercase;
         letter-spacing: 0.5px; margin-bottom: 8px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .shortcut-key {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 4px;
+        font-size: 0.65rem; text-transform: none;
       }
       .settings-btn-group { display: flex; gap: 4px; }
       .settings-action-btn {
@@ -498,8 +511,8 @@ export class ReaderUI {
       <div id="settings-panel">
         <div class="settings-header">Settings</div>
         <div class="settings-section">
-          <div class="settings-label">Shortcuts</div>
-          <button class="settings-action-btn" id="shortcuts-btn">Set Keyboard Shortcut</button>
+          <div class="settings-label">Shortcut <span class="shortcut-key">${navigator.userAgent.includes('Mac') ? '⌃⇧R' : 'Alt+R'}</span></div>
+          <button class="settings-action-btn" id="shortcuts-btn">Change</button>
         </div>
         <div class="settings-section">
           <div class="settings-label">Paragraphs</div>
@@ -559,6 +572,7 @@ export class ReaderUI {
           <div class="highlight-actions"><button class="highlight-btn highlight-btn-cancel">Cancel</button><button class="highlight-btn highlight-btn-save">Save Note</button></div>
         </div>
       </div>
+      ${this.onboardingGuide.getHTML()}
     `;
   }
 
@@ -1491,5 +1505,26 @@ export class ReaderUI {
 
   public getParagraphCount(): 1 | 3 | 5 {
     return this.currentParagraphCount;
+  }
+
+  private setupOnboarding(): void {
+    this.onboardingGuide.setup();
+    this.onboardingGuide.onComplete(() => {
+      if (this.onboardingCompleteCallback) {
+        this.onboardingCompleteCallback();
+      }
+    });
+  }
+
+  public showOnboarding(): void {
+    this.onboardingGuide.show();
+  }
+
+  public hideOnboarding(): void {
+    this.onboardingGuide.hide();
+  }
+
+  public onOnboardingComplete(callback: () => void): void {
+    this.onboardingCompleteCallback = callback;
   }
 }

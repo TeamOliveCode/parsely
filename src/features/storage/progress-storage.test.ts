@@ -114,7 +114,7 @@ describe('ProgressStorage', () => {
       const bookmark = {
         url: 'https://example.com',
         paragraphIndex: 5,
-        paragraphText: 'Test paragraph',
+        paragraphPreview: 'Test paragraph',
         title: 'Test Article',
         createdAt: Date.now(),
       };
@@ -130,7 +130,7 @@ describe('ProgressStorage', () => {
       await ProgressStorage.addBookmark({
         url: 'https://example.com',
         paragraphIndex: 3,
-        paragraphText: 'Text',
+        paragraphPreview: 'Text',
         title: 'Title',
         createdAt: Date.now(),
       });
@@ -144,7 +144,7 @@ describe('ProgressStorage', () => {
       await ProgressStorage.addBookmark({
         url: 'https://example.com',
         paragraphIndex: 2,
-        paragraphText: 'Text',
+        paragraphPreview: 'Text',
         title: 'Title',
         createdAt: Date.now(),
       });
@@ -158,14 +158,14 @@ describe('ProgressStorage', () => {
       const original = {
         url: 'https://example.com',
         paragraphIndex: 1,
-        paragraphText: 'Original',
+        paragraphPreview: 'Original',
         title: 'Title',
         createdAt: Date.now(),
       };
 
       const updated = {
         ...original,
-        paragraphText: 'Updated',
+        paragraphPreview: 'Updated',
       };
 
       await ProgressStorage.addBookmark(original);
@@ -173,7 +173,7 @@ describe('ProgressStorage', () => {
 
       const bookmarks = await ProgressStorage.getBookmarks();
       expect(bookmarks).toHaveLength(1);
-      expect(bookmarks[0].paragraphText).toBe('Updated');
+      expect(bookmarks[0].paragraphPreview).toBe('Updated');
     });
   });
 

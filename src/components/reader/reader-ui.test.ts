@@ -83,7 +83,7 @@ describe('ReaderUI', () => {
       readerUI.mount();
       readerUI.setParagraphs('Title', ['Para 1', 'Para 2']);
 
-      await readerUI.updateParagraph(0, 'Para 1', 5, false, '', false);
+      await readerUI.updateParagraph('Para 1', null, 'Para 2');
       // Should not throw
     });
 
@@ -91,7 +91,8 @@ describe('ReaderUI', () => {
       readerUI.mount();
       readerUI.setParagraphs('Title', ['Para 1']);
 
-      await readerUI.updateParagraph(0, 'Para 1', 0, true, '', false);
+      // Completion is handled by showCompletion, but updateParagraph can still be called
+      await readerUI.updateParagraph('Para 1');
       // Should handle completion
     });
   });
@@ -229,23 +230,13 @@ describe('ReaderUI', () => {
   describe('setCurrentParagraphState', () => {
     it('should update current paragraph state', () => {
       readerUI.mount();
-      readerUI.setCurrentParagraphState({
-        index: 0,
-        text: 'Test paragraph',
-        isBookmarked: true,
-        memo: 'Test memo',
-      });
+      readerUI.setCurrentParagraphState(0, 'Test paragraph', 'Test memo', true);
       // State should be updated
     });
 
     it('should handle empty memo', () => {
       readerUI.mount();
-      readerUI.setCurrentParagraphState({
-        index: 0,
-        text: 'Test',
-        isBookmarked: false,
-        memo: '',
-      });
+      readerUI.setCurrentParagraphState(0, 'Test', '', false);
       // Should not throw
     });
   });
@@ -267,37 +258,19 @@ describe('ReaderUI', () => {
   describe('applyPreferences', () => {
     it('should apply font family preference', () => {
       readerUI.mount();
-      readerUI.applyPreferences({
-        fontFamily: 'Georgia',
-        opacityLevel: 1,
-        fontSize: 18,
-        paragraphCount: 3,
-        paragraphSpacing: 1,
-      });
+      readerUI.applyPreferences('Georgia', 1, 18, 3, 1);
       // Font should be applied
     });
 
     it('should apply opacity preference', () => {
       readerUI.mount();
-      readerUI.applyPreferences({
-        fontFamily: 'Charter',
-        opacityLevel: 2,
-        fontSize: 20,
-        paragraphCount: 1,
-        paragraphSpacing: 0,
-      });
+      readerUI.applyPreferences('Charter', 2, 20, 1, 0);
       // Opacity should be applied
     });
 
     it('should apply all preferences', () => {
       readerUI.mount();
-      readerUI.applyPreferences({
-        fontFamily: 'Athelas',
-        opacityLevel: 0,
-        fontSize: 24,
-        paragraphCount: 5,
-        paragraphSpacing: 2,
-      });
+      readerUI.applyPreferences('Athelas', 0, 24, 5, 2);
       // All preferences should be applied
     });
   });
@@ -310,13 +283,7 @@ describe('ReaderUI', () => {
 
     it('should return a valid paragraph count after apply preferences', () => {
       readerUI.mount();
-      readerUI.applyPreferences({
-        fontFamily: 'Charter',
-        opacityLevel: 1,
-        fontSize: 20,
-        paragraphCount: 5,
-        paragraphSpacing: 1,
-      });
+      readerUI.applyPreferences('Charter', 1, 20, 5, 1);
       // The paragraph count should be one of the valid options
       expect([1, 3, 5]).toContain(readerUI.getParagraphCount());
     });
@@ -330,7 +297,7 @@ describe('ReaderUI', () => {
           {
             url: 'https://example.com',
             paragraphIndex: 0,
-            paragraphText: 'Test paragraph',
+            paragraphPreview: 'Test paragraph',
             title: 'Test Title',
             createdAt: Date.now(),
           },

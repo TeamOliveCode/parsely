@@ -11,6 +11,8 @@ import type {
   GoToParagraphCallback,
   Bookmark,
   HighlightNote,
+  ParagraphMetadata,
+  OnParagraphChangeCallback,
 } from '../../types';
 import type { ScrollController } from '../../core/navigation/scroll-controller';
 import { OnboardingGuide } from './onboarding-guide';
@@ -30,8 +32,10 @@ export class ReaderUI {
   private emailSubscribeCallback: EmailSubscribeCallback | null = null;
   private highlightNoteCallback: HighlightNoteCallback | null = null;
   private goToParagraphCallback: GoToParagraphCallback | null = null;
+  private paragraphChangeCallback: OnParagraphChangeCallback | null = null;
 
   private allBookmarks: Bookmark[] = [];
+  private paragraphMetadata: ParagraphMetadata[] = [];
   private allHighlightNotes: HighlightNote[] = [];
   private currentUrl: string = '';
 
@@ -121,6 +125,19 @@ export class ReaderUI {
     return `
       :host { display: block; }
       ${this.onboardingGuide.getStyles()}
+      #reader-extension-slot-left {
+        position: fixed;
+        left: 60px;
+        top: 50%;
+        transform: translateY(-50%);
+        max-width: 350px;
+        max-height: 70vh;
+        pointer-events: auto;
+        z-index: 10;
+      }
+      @media (max-width: 1100px) {
+        #reader-extension-slot-left { display: none; }
+      }
       #overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -462,6 +479,7 @@ export class ReaderUI {
 
   private getOverlayHTML(): string {
     return `
+      <div id="reader-extension-slot-left"></div>
       <div id="status">
         <div id="title-indicator">Initializing...</div>
         <div id="right-header">
@@ -1120,10 +1138,11 @@ export class ReaderUI {
 
   private totalParagraphs: number = 0;
 
-  public setParagraphs(title: string, paragraphs: string[]) {
+  public setParagraphs(title: string, paragraphs: string[], metadata?: ParagraphMetadata[]) {
     const titleIndicator = this.shadowRoot.getElementById('title-indicator');
     if (titleIndicator) titleIndicator.textContent = title;
     this.totalParagraphs = paragraphs.length;
+    this.paragraphMetadata = metadata || [];
     const minimap = this.shadowRoot.getElementById('minimap');
     if (minimap) {
       minimap.innerHTML = '';
@@ -1444,6 +1463,12 @@ export class ReaderUI {
     this.isCurrentBookmarked = isBookmarked;
     this.updateMemoButtonState();
     this.setBookmarkButtonState(isBookmarked);
+
+    // Notify paragraph change callback (for PDF preview updates)
+    if (this.paragraphChangeCallback) {
+      const metadata = this.paragraphMetadata[index] || null;
+      this.paragraphChangeCallback(index, metadata);
+    }
   }
 
   private setBookmarkButtonState(isBookmarked: boolean): void {
@@ -1526,5 +1551,20 @@ export class ReaderUI {
 
   public onOnboardingComplete(callback: () => void): void {
     this.onboardingCompleteCallback = callback;
+  }
+
+  // Extension point: get slot element for injecting custom content (e.g., PDF preview)
+  public getExtensionSlot(position: 'left'): HTMLElement | null {
+    return this.shadowRoot.getElementById(`reader-extension-slot-${position}`);
+  }
+
+  // Get current paragraph metadata (for PDF position tracking)
+  public getCurrentParagraphMetadata(): ParagraphMetadata | null {
+    return this.paragraphMetadata[this.currentParagraphIndex] || null;
+  }
+
+  // Register callback for paragraph changes (for PDF preview updates)
+  public onParagraphChange(callback: OnParagraphChangeCallback): void {
+    this.paragraphChangeCallback = callback;
   }
 }

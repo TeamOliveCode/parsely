@@ -1,3 +1,32 @@
+// Check if URL is a PDF
+function isPdfUrl(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    // Check file extension
+    if (urlObj.pathname.toLowerCase().endsWith('.pdf')) {
+      return true;
+    }
+    // Check common PDF hosting patterns
+    if (urlObj.hostname.includes('arxiv.org') && urlObj.pathname.includes('/pdf/')) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// Open PDF in Parsely PDF Reader
+function openPdfReader(pdfUrl: string) {
+  // Get extension base URL and construct PDF reader URL
+  // WXT builds pdf-reader/index.html as pdf-reader.html
+  const extUrl = browser.runtime.getURL('');
+  const readerUrl = `${extUrl}pdf-reader.html`;
+  browser.tabs.create({
+    url: `${readerUrl}?url=${encodeURIComponent(pdfUrl)}`,
+  });
+}
+
 export default defineBackground(() => {
   // Create context menu for selected text
   browser.contextMenus.create({
@@ -6,8 +35,23 @@ export default defineBackground(() => {
     contexts: ['selection'],
   });
 
+  // Create context menu for PDF links
+  browser.contextMenus.create({
+    id: 'read-pdf-link',
+    title: 'Read PDF with Parsely',
+    contexts: ['link'],
+    targetUrlPatterns: ['*://*/*.pdf', '*://*/*.pdf?*', '*://arxiv.org/pdf/*'],
+  });
+
   // Handle context menu click
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
+    // Handle PDF link click
+    if (info.menuItemId === 'read-pdf-link' && info.linkUrl) {
+      openPdfReader(info.linkUrl);
+      return;
+    }
+
+    // Handle text selection
     if (info.menuItemId === 'read-selection' && tab?.id) {
       try {
         await browser.tabs.sendMessage(tab.id, { type: 'READ_SELECTION' });
@@ -37,6 +81,11 @@ export default defineBackground(() => {
         : 'chrome://extensions/shortcuts';
       browser.tabs.create({ url });
     }
+
+    // Handle PDF reader request
+    if (message.type === 'OPEN_PDF_READER' && message.url) {
+      openPdfReader(message.url);
+    }
   });
 
   // Use browserAction for MV2 (Firefox), action for MV3 (Chrome)
@@ -44,8 +93,9 @@ export default defineBackground(() => {
   actionApi.onClicked.addListener(async (tab) => {
     if (!tab.id || !tab.url) return;
 
-    // Skip restricted pages where content scripts can't run
     const url = tab.url;
+
+    // Skip restricted pages where content scripts can't run
     if (
       url.startsWith('chrome://') ||
       url.startsWith('chrome-extension://') ||
@@ -57,6 +107,13 @@ export default defineBackground(() => {
       return;
     }
 
+    // If current page is a PDF, open PDF reader
+    if (isPdfUrl(url)) {
+      openPdfReader(url);
+      return;
+    }
+
+    // Otherwise, toggle normal reader
     try {
       await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_READER' });
     } catch {

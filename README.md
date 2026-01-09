@@ -3,7 +3,7 @@
 Read articles one paragraph at a time with focused, distraction-free reading.
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj">
+  <a href="https://parsely.obasic.app/">
     <img src="public/icon/128.png" alt="Parsely" width="128" height="128">
   </a>
 </p>
@@ -11,6 +11,14 @@ Read articles one paragraph at a time with focused, distraction-free reading.
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj">
     <strong>Install for Chrome</strong>
+  </a>
+  &nbsp;|&nbsp;
+  <a href="https://addons.mozilla.org/firefox/addon/parsely/">
+    <strong>Install for Firefox</strong>
+  </a>
+  &nbsp;|&nbsp;
+  <a href="https://chromewebstore.google.com/detail/parsely/ackaeneemjkgbjpbmpogdbkpkfeobamj">
+    <strong>Install for Edge</strong>
   </a>
 </p>
 

@@ -30,7 +30,10 @@ export default defineConfig({
       name: 'Parsely',
       description: 'Read articles one paragraph at a time. Focused, distraction-free reading.',
       permissions: ['storage', 'scripting', 'activeTab', 'contextMenus'],
-      host_permissions: ['https://cloud.umami.is/*'],
+      host_permissions: [
+        'https://cloud.umami.is/*',
+        '<all_urls>',
+      ],
       action: {},
       commands: {
         [commandKey]: {

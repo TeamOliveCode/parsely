@@ -79,3 +79,18 @@ export type HighlightNoteCallback = (
   note: string
 ) => void;
 export type GoToParagraphCallback = (paragraphIndex: number) => void;
+
+// Paragraph metadata for PDF position tracking
+export interface ParagraphMetadata {
+  pageNum?: number;
+  startY?: number;
+  endY?: number;
+  x?: number;
+  width?: number;
+}
+
+// Callback when paragraph changes (for PDF preview updates)
+export type OnParagraphChangeCallback = (
+  index: number,
+  metadata: ParagraphMetadata | null
+) => void;

@@ -1012,14 +1012,17 @@ export class ReaderUI {
   private setupHighlightModalEvents(): void {
     const modal = this.shadowRoot.getElementById('highlight-modal');
     modal?.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (e.target === modal) this.closeHighlightModal();
     });
-    this.shadowRoot
-      .querySelector('.highlight-btn-cancel')
-      ?.addEventListener('click', () => this.closeHighlightModal());
-    this.shadowRoot
-      .querySelector('.highlight-btn-save')
-      ?.addEventListener('click', () => this.saveHighlightNote());
+    this.shadowRoot.querySelector('.highlight-btn-cancel')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.closeHighlightModal();
+    });
+    this.shadowRoot.querySelector('.highlight-btn-save')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.saveHighlightNote();
+    });
   }
 
   private setupTextSelection(): void {
@@ -1388,6 +1391,10 @@ export class ReaderUI {
     paragraphContainer.addEventListener('click', (e) => {
       // Ignore clicks on links
       if ((e.target as HTMLElement).tagName === 'A') return;
+
+      // Ignore if highlight modal is open
+      const highlightModal = this.shadowRoot.getElementById('highlight-modal');
+      if (highlightModal?.classList.contains('visible')) return;
 
       // Ignore if text is selected (user is highlighting)
       const selection = window.getSelection();

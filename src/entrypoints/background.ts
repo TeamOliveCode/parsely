@@ -27,7 +27,61 @@ function openPdfReader(pdfUrl: string) {
   });
 }
 
+// Shared handler for toggling reader (used by both action click and keyboard shortcut)
+async function toggleReader(tab: { id?: number; url?: string }) {
+  if (!tab.id || !tab.url) return;
+
+  const url = tab.url;
+
+  // Skip restricted pages where content scripts can't run
+  if (
+    url.startsWith('chrome://') ||
+    url.startsWith('chrome-extension://') ||
+    url.startsWith('about:') ||
+    url.startsWith('edge://') ||
+    url.startsWith('moz-extension://') ||
+    url.startsWith('safari-web-extension://') ||
+    url === 'about:blank'
+  ) {
+    return;
+  }
+
+  // If current page is a PDF, open PDF reader
+  if (isPdfUrl(url)) {
+    openPdfReader(url);
+    return;
+  }
+
+  // Otherwise, toggle normal reader
+  try {
+    await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_READER' });
+  } catch {
+    // Content script not loaded yet - inject it first, then send message
+    try {
+      await browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['/content-scripts/content.js'],
+      });
+      // Give the script a moment to set up the message listener
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_READER' });
+    } catch (e) {
+      console.error('Failed to inject content script:', e);
+    }
+  }
+}
+
 export default defineBackground(() => {
+  // Listen for keyboard shortcuts (especially for Safari)
+  browser.commands.onCommand.addListener(async (command) => {
+    if (command === '_execute_action' || command === '_execute_browser_action') {
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      if (tab) {
+        await toggleReader(tab);
+      }
+    }
+  });
+
   // Create context menu for selected text
   browser.contextMenus.create({
     id: 'read-selection',
@@ -74,11 +128,20 @@ export default defineBackground(() => {
   // Handle messages from content scripts
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === 'OPEN_SHORTCUTS_PAGE') {
-      // Firefox uses about:addons (can't open directly), Chrome/Edge use chrome://extensions/shortcuts
-      const isFirefox = navigator.userAgent.includes('Firefox');
-      const url = isFirefox
-        ? 'https://support.mozilla.org/en-US/kb/manage-extension-shortcuts-firefox'
-        : 'chrome://extensions/shortcuts';
+      const userAgent = navigator.userAgent;
+      const isFirefox = userAgent.includes('Firefox');
+      const isSafari = userAgent.includes('Safari') && !userAgent.includes('Chrome');
+
+      let url: string;
+      if (isSafari) {
+        // Safari: Open Apple's support page for extension shortcuts
+        url = 'https://discussions.apple.com/thread/254065221';
+      } else if (isFirefox) {
+        url = 'https://support.mozilla.org/en-US/kb/manage-extension-shortcuts-firefox';
+      } else {
+        // Chrome/Edge
+        url = 'chrome://extensions/shortcuts';
+      }
       browser.tabs.create({ url });
     }
 
@@ -88,47 +151,7 @@ export default defineBackground(() => {
     }
   });
 
-  // Use browserAction for MV2 (Firefox), action for MV3 (Chrome)
+  // Use browserAction for MV2 (Firefox), action for MV3 (Chrome/Safari)
   const actionApi = browser.action || browser.browserAction;
-  actionApi.onClicked.addListener(async (tab) => {
-    if (!tab.id || !tab.url) return;
-
-    const url = tab.url;
-
-    // Skip restricted pages where content scripts can't run
-    if (
-      url.startsWith('chrome://') ||
-      url.startsWith('chrome-extension://') ||
-      url.startsWith('about:') ||
-      url.startsWith('edge://') ||
-      url.startsWith('moz-extension://') ||
-      url === 'about:blank'
-    ) {
-      return;
-    }
-
-    // If current page is a PDF, open PDF reader
-    if (isPdfUrl(url)) {
-      openPdfReader(url);
-      return;
-    }
-
-    // Otherwise, toggle normal reader
-    try {
-      await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_READER' });
-    } catch {
-      // Content script not loaded yet - inject it first, then send message
-      try {
-        await browser.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['/content-scripts/content.js'],
-        });
-        // Give the script a moment to set up the message listener
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_READER' });
-      } catch (e) {
-        console.error('Failed to inject content script:', e);
-      }
-    }
-  });
+  actionApi.onClicked.addListener(toggleReader);
 });

@@ -26,14 +26,21 @@ export default defineConfig({
         ? '_execute_browser_action'
         : '_execute_action';
 
+    // Base permissions - Safari doesn't support 'scripting' permission well
+    const permissions: string[] = ['storage', 'activeTab', 'contextMenus'];
+    if (browser !== 'safari') {
+      permissions.push('scripting');
+    }
+
+    // Safari: avoid <all_urls> to prevent scary permission prompts
+    // Use activeTab instead - it grants access only when user clicks the extension
+    const hostPermissions = ['https://cloud.umami.is/*', '<all_urls>'];
+
     return {
       name: 'Parsely',
       description: 'Read articles one paragraph at a time. Focused, distraction-free reading.',
-      permissions: ['storage', 'scripting', 'activeTab', 'contextMenus'],
-      host_permissions: [
-        'https://cloud.umami.is/*',
-        '<all_urls>',
-      ],
+      permissions,
+      host_permissions: hostPermissions,
       action: {},
       commands: {
         [commandKey]: {
@@ -44,15 +51,18 @@ export default defineConfig({
           description: 'Run Parsely',
         },
       },
-      browser_specific_settings: {
-        gecko: {
-          id: 'parsely@olivecode.dev',
-          strict_min_version: '128.0',
-          data_collection_permissions: {
-            required: ['none'],
+      // Browser-specific settings
+      ...(browser === 'firefox' && {
+        browser_specific_settings: {
+          gecko: {
+            id: 'parsely@olivecode.dev',
+            strict_min_version: '128.0',
+            data_collection_permissions: {
+              required: ['none'],
+            },
           },
         },
-      },
+      }),
     };
   },
 });

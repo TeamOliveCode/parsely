@@ -34,6 +34,13 @@ async function safeStorageOp<T>(operation: () => Promise<T>, fallback: T): Promi
 export default defineContentScript({
   matches: ['<all_urls>'],
   main() {
+    // Prevent duplicate content script execution (Safari issue)
+    const PARSELY_INITIALIZED = '__parsely_initialized__';
+    if ((window as unknown as Record<string, boolean>)[PARSELY_INITIALIZED]) {
+      return; // Already initialized, silently exit
+    }
+    (window as unknown as Record<string, boolean>)[PARSELY_INITIALIZED] = true;
+
     let reader: ReaderUI | null = null;
     let highlighter: SourceHighlighter | null = null;
     let unsubscribe: (() => void) | null = null;

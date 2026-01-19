@@ -2,7 +2,7 @@
   "name": "parsely",
   "description": "Read articles one paragraph at a time with focused, distraction-free reading.",
   "license": "MIT",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "scripts": {
     "dev": "wxt",

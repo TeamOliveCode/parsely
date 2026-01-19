@@ -12,6 +12,8 @@
  * @see https://umami.is/docs/api/sending-stats
  */
 
+import { AnalyticsStorage } from './analytics-storage';
+
 interface UmamiPayload {
   hostname: string;
   language: string;
@@ -37,12 +39,20 @@ export class AnalyticsTracker {
   private static readonly WEBSITE_ID = import.meta.env.VITE_UMAMI_WEBSITE_ID || '';
 
   private static sessionId: string = '';
+  private static cachedUserId: string = '';
 
   private static getSessionId(): string {
     if (!this.sessionId) {
       this.sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
     }
     return this.sessionId;
+  }
+
+  private static async getUserId(): Promise<string> {
+    if (!this.cachedUserId) {
+      this.cachedUserId = await AnalyticsStorage.getUserId();
+    }
+    return this.cachedUserId;
   }
 
   /**
@@ -83,6 +93,41 @@ export class AnalyticsTracker {
   }
 
   /**
+   * Track extension install event
+   */
+  static async trackInstall(): Promise<void> {
+    await this.send('extension_installed');
+  }
+
+  /**
+   * Track daily active user (called once per day on first use)
+   */
+  static async trackDailyActive(): Promise<void> {
+    const isNewDay = await AnalyticsStorage.checkAndUpdateDailyActive();
+    if (isNewDay) {
+      await this.send('daily_active');
+    }
+  }
+
+  /**
+   * Track weekly active user (called once per week on first use)
+   */
+  static async trackWeeklyActive(): Promise<void> {
+    const isNewWeek = await AnalyticsStorage.checkAndUpdateWeeklyActive();
+    if (isNewWeek) {
+      await this.send('weekly_active');
+    }
+  }
+
+  /**
+   * Initialize tracking for a new session
+   * Call this when the extension is activated
+   */
+  static async trackActivity(): Promise<void> {
+    await Promise.all([this.trackDailyActive(), this.trackWeeklyActive()]);
+  }
+
+  /**
    * Send event to Umami Cloud
    * @see https://umami.is/docs/api/sending-stats
    */
@@ -98,6 +143,8 @@ export class AnalyticsTracker {
     }
 
     try {
+      const userId = await this.getUserId();
+
       const payload: UmamiPayload = {
         hostname: 'parsely-extension',
         language: navigator.language || 'en',
@@ -107,13 +154,12 @@ export class AnalyticsTracker {
         name: eventName,
       };
 
-      // Add custom event data if provided
-      if (eventData) {
-        payload.data = {
-          sessionId: this.getSessionId(),
-          ...eventData,
-        };
-      }
+      // Always include userId and sessionId in event data
+      payload.data = {
+        userId,
+        sessionId: this.getSessionId(),
+        ...eventData,
+      };
 
       const request: UmamiRequest = {
         type: 'event',

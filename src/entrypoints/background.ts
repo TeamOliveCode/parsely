@@ -1,3 +1,6 @@
+import { AnalyticsTracker } from '../features/analytics/tracker';
+import { AnalyticsStorage } from '../features/analytics/analytics-storage';
+
 // Check if URL is a PDF
 function isPdfUrl(url: string): boolean {
   try {
@@ -80,6 +83,16 @@ export default defineBackground(() => {
         await toggleReader(tab);
       }
     }
+  });
+
+  // Track extension install/update
+  browser.runtime.onInstalled.addListener(async (details) => {
+    if (details.reason === 'install') {
+      // First install - track it
+      await AnalyticsTracker.trackInstall();
+    }
+    // Initialize user ID on install/update (ensures it exists)
+    await AnalyticsStorage.getUserId();
   });
 
   // Create context menu for selected text

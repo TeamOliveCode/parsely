@@ -11,13 +11,6 @@ import { AnalyticsTracker } from '../features/analytics/tracker';
 import { EmailCollector } from '../features/subscription/email-collector';
 import type { Bookmark } from '../types';
 
-// Prevent duplicate content script execution (Safari issue)
-const PARSELY_INITIALIZED = '__parsely_initialized__';
-if ((window as unknown as Record<string, boolean>)[PARSELY_INITIALIZED]) {
-  throw new Error('Parsely already initialized');
-}
-(window as unknown as Record<string, boolean>)[PARSELY_INITIALIZED] = true;
-
 // Helper to safely execute storage operations that may fail if extension context is invalidated
 async function safeStorageOp<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -108,7 +101,8 @@ export default defineContentScript({
               prefs.paragraphSpacing
             );
 
-            // Track reader open
+            // Track daily/weekly active user and reader open
+            AnalyticsTracker.trackActivity();
             AnalyticsTracker.trackOpen(currentUrl, articleTitle, paragraphs.length);
 
             // Initialize with starting position

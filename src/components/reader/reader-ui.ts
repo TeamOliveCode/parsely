@@ -54,6 +54,7 @@ export class ReaderUI {
     { opacity: 0.5, blur: 2, label: 'Light' },
     { opacity: 0.75, blur: 3, label: 'Medium' },
     { opacity: 0.9, blur: 4, label: 'Dark' },
+    { opacity: 1, blur: 5, label: 'Black' },
   ];
 
   private fontOptions = [
@@ -250,17 +251,66 @@ export class ReaderUI {
         display: flex; gap: 2px; background: rgba(40, 40, 40, 0.95); padding: 4px;
         border-radius: 8px; backdrop-filter: blur(10px);
       }
-      .bottom-left-row .opacity-btn {
-        padding: 6px 10px; border: none; background: transparent;
-        color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
-        border-radius: 6px; transition: all 0.2s ease; white-space: nowrap;
+      .opacity-slider-row {
+        flex-direction: column; padding: 8px 12px; gap: 6px;
       }
-      .bottom-left-row .opacity-btn:hover {
-        color: rgba(255, 255, 255, 0.8);
+      .opacity-label {
+        font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.4);
       }
-      .bottom-left-row .opacity-btn.active {
-        background: rgba(0, 255, 159, 0.25); color: #00ff9f;
+      .opacity-slider-container {
+        width: 100%; display: flex; flex-direction: column; gap: 4px;
+      }
+      .opacity-presets {
+        display: flex; justify-content: space-between; width: 100%; padding: 0 2px;
+      }
+      .opacity-preset {
+        padding: 2px 0; border: none; background: transparent;
+        color: rgba(255, 255, 255, 0.4); font-size: 0.9rem;
+        cursor: pointer; transition: all 0.2s ease;
+      }
+      .opacity-preset:hover {
+        color: rgba(255, 255, 255, 0.7); transform: scale(1.1);
+      }
+      .opacity-preset.active {
+        color: #00ff9f;
+      }
+      .opacity-slider-track {
+        position: relative; width: 100%; height: 16px; display: flex; align-items: center;
+      }
+      .opacity-ticks {
+        position: absolute; left: 7px; right: 7px; height: 100%;
+        display: flex; align-items: center; pointer-events: none;
+      }
+      .opacity-tick {
+        position: absolute; width: 16px; height: 16px; background: transparent;
+        border-radius: 50%; transform: translateX(-50%); cursor: pointer; z-index: 3;
+        display: flex; align-items: center; justify-content: center; pointer-events: auto;
+      }
+      .opacity-tick::after {
+        content: ''; width: 6px; height: 6px; background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%; transition: all 0.15s ease;
+      }
+      .opacity-tick:hover::after {
+        background: rgba(255, 255, 255, 0.6); transform: scale(1.2);
+      }
+      .opacity-slider {
+        -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
+        background: rgba(255, 255, 255, 0.15); border-radius: 2px; outline: none;
+        cursor: pointer; position: relative; z-index: 2;
+      }
+      .opacity-slider::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
+        background: #00ff9f; border-radius: 50%; cursor: pointer;
+        box-shadow: 0 0 8px rgba(0, 255, 159, 0.5); transition: transform 0.15s ease;
+        position: relative; z-index: 3;
+      }
+      .opacity-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+      }
+      .opacity-slider::-moz-range-thumb {
+        width: 14px; height: 14px; background: #00ff9f; border-radius: 50%;
+        cursor: pointer; border: none; box-shadow: 0 0 8px rgba(0, 255, 159, 0.5);
       }
       .bottom-left-row .size-label {
         padding: 6px 8px; color: rgba(255, 255, 255, 0.4); font-size: 0.65rem;
@@ -513,10 +563,25 @@ export class ReaderUI {
         <a class="toolbar-btn" id="feedback-btn" href="mailto:contact@olive-labs.com?subject=Parsely Feedback" title="Send feedback">Feedback</a>
       </div>
       <div id="bottom-left-controls">
-        <div class="bottom-left-row">
-          <button class="opacity-btn" data-level="0">Light</button>
-          <button class="opacity-btn active" data-level="1">Medium</button>
-          <button class="opacity-btn" data-level="2">Dark</button>
+        <div class="bottom-left-row opacity-slider-row">
+          <span class="opacity-label">Brightness</span>
+          <div class="opacity-slider-container">
+            <div class="opacity-presets">
+              <button class="opacity-preset" data-level="0" title="Light"></button>
+              <button class="opacity-preset active" data-level="1" title="Medium"></button>
+              <button class="opacity-preset" data-level="2" title="Dark"></button>
+              <button class="opacity-preset" data-level="3" title="Black"></button>
+            </div>
+            <div class="opacity-slider-track">
+              <div class="opacity-ticks">
+                <div class="opacity-tick" data-level="0" style="left: 0%"></div>
+                <div class="opacity-tick" data-level="1" style="left: 33.33%"></div>
+                <div class="opacity-tick" data-level="2" style="left: 66.66%"></div>
+                <div class="opacity-tick" data-level="3" style="left: 100%"></div>
+              </div>
+              <input type="range" id="opacity-slider" class="opacity-slider" min="0" max="100" value="33" />
+            </div>
+          </div>
         </div>
         <div class="bottom-left-row">
           <span class="size-label">Size</span>
@@ -700,13 +765,8 @@ export class ReaderUI {
       ?.addEventListener('click', () => this.changeFontSize(1));
     this.updateFontSizeButtons();
 
-    // Bottom-left controls: Opacity buttons
-    this.shadowRoot.querySelectorAll('.opacity-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const level = parseInt((btn as HTMLElement).dataset.level || '1');
-        this.setOpacityLevel(level);
-      });
-    });
+    // Bottom-left controls: Opacity slider and presets
+    this.setupOpacitySlider();
 
     // Prevent bottom-left controls from closing settings panel
     const bottomLeftControls = this.shadowRoot.getElementById('bottom-left-controls');
@@ -1118,6 +1178,88 @@ export class ReaderUI {
     }
   }
 
+  private setupOpacitySlider(): void {
+    const slider = this.shadowRoot.getElementById('opacity-slider') as HTMLInputElement;
+    const presets = this.shadowRoot.querySelectorAll('.opacity-preset');
+    const ticks = this.shadowRoot.querySelectorAll('.opacity-tick');
+
+    if (slider) {
+      // Slider input event (while dragging)
+      slider.addEventListener('input', () => {
+        const value = parseInt(slider.value);
+        this.applyOpacityFromSlider(value);
+        this.updatePresetHighlight(value);
+      });
+
+      // Slider change event (on release) - snap to nearest preset
+      slider.addEventListener('change', () => {
+        const value = parseInt(slider.value);
+        const snappedLevel = this.getClosestPresetLevel(value);
+        const snappedValue = this.levelToSliderValue(snappedLevel);
+        slider.value = snappedValue.toString();
+        this.setOpacityLevel(snappedLevel);
+      });
+    }
+
+    // Preset click events (symbols above slider)
+    presets.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const level = parseInt((btn as HTMLElement).dataset.level || '1');
+        this.setOpacityLevel(level);
+      });
+    });
+
+    // Tick click events (dots on slider track)
+    ticks.forEach((tick) => {
+      tick.addEventListener('click', () => {
+        const level = parseInt((tick as HTMLElement).dataset.level || '1');
+        this.setOpacityLevel(level);
+      });
+    });
+  }
+
+  private levelToSliderValue(level: number): number {
+    // Map 0-3 levels to 0-100 slider values (0, 33, 67, 100)
+    return Math.round((level / 3) * 100);
+  }
+
+  private sliderValueToLevel(value: number): number {
+    // Map 0-100 slider values to 0-3 levels
+    return Math.round((value / 100) * 3);
+  }
+
+  private getClosestPresetLevel(sliderValue: number): number {
+    // Find the closest preset level with snap threshold
+    const level = (sliderValue / 100) * 3;
+    return Math.round(level);
+  }
+
+  private applyOpacityFromSlider(sliderValue: number): void {
+    // Interpolate between opacity levels based on slider value
+    const normalizedValue = sliderValue / 100;
+    const levelFloat = normalizedValue * 3;
+    const lowerLevel = Math.floor(levelFloat);
+    const upperLevel = Math.min(lowerLevel + 1, 3);
+    const t = levelFloat - lowerLevel;
+
+    const lowerConfig = this.opacityLevels[lowerLevel];
+    const upperConfig = this.opacityLevels[upperLevel];
+
+    const opacity = lowerConfig.opacity + (upperConfig.opacity - lowerConfig.opacity) * t;
+    const blur = lowerConfig.blur + (upperConfig.blur - lowerConfig.blur) * t;
+
+    this.container.style.background = `rgba(0, 0, 0, ${opacity})`;
+    this.container.style.backdropFilter = `blur(${blur}px)`;
+    (this.container.style as any).WebkitBackdropFilter = `blur(${blur}px)`;
+  }
+
+  private updatePresetHighlight(sliderValue: number): void {
+    const level = this.sliderValueToLevel(sliderValue);
+    this.shadowRoot
+      .querySelectorAll('.opacity-preset')
+      .forEach((btn, i) => btn.classList.toggle('active', i === level));
+  }
+
   private setOpacityLevel(level: number): void {
     this.currentOpacityLevel = level;
     const config = this.opacityLevels[level];
@@ -1125,8 +1267,13 @@ export class ReaderUI {
     this.container.style.backdropFilter = `blur(${config.blur}px)`;
     (this.container.style as any).WebkitBackdropFilter = `blur(${config.blur}px)`;
     this.shadowRoot
-      .querySelectorAll('.opacity-btn')
+      .querySelectorAll('.opacity-preset')
       .forEach((btn, i) => btn.classList.toggle('active', i === level));
+    // Sync slider value
+    const slider = this.shadowRoot.getElementById('opacity-slider') as HTMLInputElement;
+    if (slider) {
+      slider.value = this.levelToSliderValue(level).toString();
+    }
     if (this.opacityChangeCallback) this.opacityChangeCallback(level);
   }
 
